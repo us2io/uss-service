@@ -1,0 +1,37 @@
+image: repo.us2.io/play-build
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: repo.us2.io
+  CONTAINER: svc-seed
+
+package:
+  stage: test
+  tags:
+    - docker
+  script:
+    - sbt clean compile test universal:packageZipTarball
+    - mv target/universal/*.tgz docker/package.tar.gz
+  artifacts:
+    paths:
+      - docker/package.tar.gz
+
+deploy:
+  stage: deploy
+  image: gitlab/dind
+  dependencies:
+      - package
+  tags:
+    - dnd
+  only:
+    - master
+  script:
+    - docker build -t ${DOCKER_REGISTRY}/${CONTAINER}:latest docker
+    - docker tag ${DOCKER_REGISTRY}/${CONTAINER}:latest ${DOCKER_REGISTRY}/${CONTAINER}:build${CI_BUILD_ID}
+    - docker push ${DOCKER_REGISTRY}/${CONTAINER}:build${CI_BUILD_ID}
+    - docker push ${DOCKER_REGISTRY}/${CONTAINER}:latest
+    - echo docker pull ${DOCKER_REGISTRY}/${CONTAINER}:build${CI_BUILD_ID}

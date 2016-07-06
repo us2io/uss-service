@@ -1,0 +1,6 @@
+This is your new microservice
+=================================
+
+Run in dev mode with Kamon using
+
+`sbt aspectj-runner:run`

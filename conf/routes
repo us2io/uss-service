@@ -1,0 +1,42 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# System routes
+### NoDocs ###
+GET     /healthz                           io.us2.svc.seed.controllers.SystemController.health
+### NoDocs ###
+GET     /metrics                           io.us2.svc.seed.controllers.SystemController.metrics
+
+### NoDocs ###
+POST    /kill                              io.us2.svc.seed.controllers.SystemController.kill
+
+# Documentation routes
+
+### NoDocs ###
+GET   /docs/swagger.json                   io.us2.svc.seed.controllers.ApiSpecs.specs
+### NoDocs ###
+GET   /docs/swagger-ui                     io.us2.svc.seed.controllers.ApiSpecs.redirect
+### NoDocs ###
+GET   /docs/swagger-ui/*file               controllers.Assets.at(path:String="/public/lib/swagger-ui", file)
+
+###
+#  summary: Example endpoint
+#  description: |
+#    Just an exmaple
+#  parameters:
+#    - name: parameters
+#      in: body
+#      description: The JSON body object
+#      required: true
+#      schema:
+#        $ref: '#/definitions/ExampleModel'
+#  responses:
+#      200:
+#        description: Message id
+#      400:
+#        description: An unexpected error occurred
+#      500:
+#        description: Malformed SQL cannot be executed or execution failed
+###
+POST   /api/seed/v1/test                 io.us2.svc.seed.controllers.ExampleController.test

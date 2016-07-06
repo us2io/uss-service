@@ -1,0 +1,76 @@
+#!/bin/sh
+set -e
+
+PROGNAME=$(basename $0)
+
+die() {
+    echo "$PROGNAME: $*" >&2
+    exit 1
+}
+
+usage() {
+    if [ "$*" != "" ] ; then
+        echo "Error: $*"
+    fi
+
+    cat << EOF
+Usage: $PROGNAME [OPTION ...] deployment image
+Patches a kubernetes deployment to a new image
+
+Options:
+-h, --help              display this usage message and exit
+-c, --context [CTX]     set kubectl context to use
+-n, --namespace [NS]    set cluster namespace
+EOF
+
+    exit 1
+}
+
+namespace="default"
+context=""
+deployment=""
+image=""
+while [ $# -gt 0 ] ; do
+    case "$1" in
+    -h|--help)
+        usage
+        ;;
+    -c|--context)
+        context="$2"
+        shift
+        ;;
+    -n|--namespace)
+        namespace="$2"
+        shift
+        ;;
+    -*)
+        usage "Unknown option '$1'"
+        ;;
+    *)
+        if [ -z "$deployment" ] ; then
+            deployment="$1"
+        elif [ -z "$image" ] ; then
+            image="$1"
+        else
+            usage "Too many arguments"
+        fi
+        ;;
+    esac
+    shift
+done
+
+if [ -z "$image" ] ; then
+    usage "Not enough arguments"
+fi
+
+CMD_PREFIX=""
+if [ ! -z "$namespace" ] ; then
+   CMD_PREFIX="--namespace $namespace"
+fi
+
+if [ ! -z "$context" ] ; then
+   CMD_PREFIX="$CMD_PREFIX --context $context"
+fi
+
+echo Updating deployment $namespace/$deployment to image $image
+kubectl $CMD_PREFIX patch deployment $deployment --record --type='json' -p="[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\":\"$image\"}]"
