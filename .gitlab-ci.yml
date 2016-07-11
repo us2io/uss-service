@@ -30,7 +30,7 @@ deploy:
   only:
     - master
   script:
-    - docker build -t ${DOCKER_REGISTRY}/${CONTAINER}:latest docker
+    - docker build --build-arg APP_VER=${CI_BUILD_ID} -t ${DOCKER_REGISTRY}/${CONTAINER}:latest docker
     - docker tag ${DOCKER_REGISTRY}/${CONTAINER}:latest ${DOCKER_REGISTRY}/${CONTAINER}:build${CI_BUILD_ID}
     - docker push ${DOCKER_REGISTRY}/${CONTAINER}:build${CI_BUILD_ID}
     - docker push ${DOCKER_REGISTRY}/${CONTAINER}:latest

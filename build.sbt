@@ -1,3 +1,5 @@
+import uk.co.josephearl.sbt.findbugs.FindBugsPriority.Low
+
 name := "svc-seed"
 
 version := "1.0-SNAPSHOT"
@@ -21,7 +23,7 @@ libraryDependencies ++= {
 //    "org.apache.camel" % "camel-aws" % camelV,
 
     // Database access
-    "org.jooq" % "jooq" % "3.7.0",
+    "org.sql2o" % "sql2o" % "1.5.4",
     "mysql" % "mysql-connector-java" % "5.1.18",
 
     // AWS APIs
@@ -49,6 +51,10 @@ libraryDependencies ++= {
   )
 }
 
+libraryDependencies ~= {
+  _.map(_.exclude("org.slf4j", "slf4j-log4j12"))
+}
+
 resolvers ++= Seq(Resolver.jcenterRepo, "Kamon Repository Snapshots" at "http://snapshots.kamon.io")
 
 javacOptions ++= Seq("-Xlint:unchecked", "-parameters")
@@ -62,6 +68,7 @@ PmdSettings.pmdTask
 //findbugsSettings
 findbugsOnlyAnalyze := Some(Seq("io.us2.svc"))
 findbugsFailOnError := true
+findbugsPriority := Low
 
 (findbugs in Compile) <<= (findbugs in Compile) triggeredBy (compile in Compile)
 compile <<= (compile in Compile).dependsOn(PmdSettings.pmd)
