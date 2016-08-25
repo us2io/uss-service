@@ -45,7 +45,7 @@ libraryDependencies ++= {
     "com.novocode" % "junit-interface" % "0.11" % Test,
     "com.typesafe.akka" %% "akka-testkit" % akkaV % Test,
     "org.assertj" % "assertj-core" % "3.4.1" % Test,
-
+    "org.mockito" % "mockito-all" % "1.10.19" % Test,
     // Java Agent
     "org.aspectj" % "aspectjweaver" % "1.8.9"
   )
