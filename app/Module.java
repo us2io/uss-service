@@ -10,6 +10,8 @@ import io.prometheus.client.CollectorRegistry;
 import io.us2.svc.seed.actors.ChildConsumerActor;
 import io.us2.svc.seed.actors.ParentActor;
 import io.us2.svc.seed.helpers.LifecycleHelper;
+import play.Configuration;
+import play.Environment;
 import play.libs.akka.AkkaGuiceSupport;
 
 import javax.inject.Singleton;
@@ -26,13 +28,24 @@ import javax.inject.Singleton;
  */
 public class Module extends AbstractModule implements AkkaGuiceSupport {
 
+    private Environment environment;
+    private Configuration configuration;
+
+    public Module(Environment environment, Configuration configuration){
+        this.environment = environment;
+        this.configuration = configuration;
+    }
+
     @Override
     public void configure() {
         bind(LifecycleHelper.class).asEagerSingleton();
 
         bind(CollectorRegistry.class).toInstance(CollectorRegistry.defaultRegistry);
 
-        bindActor(ParentActor.class, "svc-actor");
+        //Only bind actors in non-test
+        if(!environment.isTest()){
+            bindActor(ParentActor.class, "svc-actor");
+        }
 
         bindActorFactory(ChildConsumerActor.class,
                 ChildConsumerActor.Factory.class);
