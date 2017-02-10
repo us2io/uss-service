@@ -18,10 +18,6 @@ libraryDependencies ++= {
     cache,
     javaWs,
 
-    // Akka camel
-    "com.typesafe.akka" %% "akka-camel" % akkaV,
-//    "org.apache.camel" % "camel-aws" % camelV,
-
     // Database access
     "org.sql2o" % "sql2o" % "1.5.4",
     "mysql" % "mysql-connector-java" % "5.1.18",
@@ -56,6 +52,8 @@ libraryDependencies ~= {
 }
 
 resolvers ++= Seq(Resolver.jcenterRepo, "Kamon Repository Snapshots" at "http://snapshots.kamon.io")
+resolvers += "USS Releases" at "https://artifacts.us2.io/artifactory/maven-releases"
+resolvers += "USS" at "https://maven.us2.io/nexus/content/groups/public"
 
 javacOptions ++= Seq("-Xlint:unchecked", "-parameters")
 javaOptions ++= Seq("-Dlogger.resource=dev-logback.xml")

@@ -6,23 +6,28 @@ stages:
   - deploy
 
 variables:
-  DOCKER_REGISTRY: repo.us2.io
-  CONTAINER: svc-seed
+  _JAVA_OPTIONS: -Duser.home=${CI_PROJECT_DIR}/.java -Dsbt.boot.credentials=${CI_PROJECT_DIR}/.java/.ivy2/.credentials
+  DOCKER_REGISTRY: registry.us2.io
 
 package:
   stage: test
   tags:
-    - docker
+    - aws
   script:
     - sbt clean compile test universal:packageZipTarball
     - mv target/universal/*.tgz docker/package.tar.gz
   artifacts:
+    expire_in: 1 day
     paths:
       - docker/package.tar.gz
 
 deploy:
   stage: deploy
-  image: gitlab/dind
+  image: docker:1.10
+  tags:
+    - aws
+  services:
+    - docker:1.10-dind
   dependencies:
       - package
   tags:
