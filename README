@@ -4,3 +4,9 @@ This is your new microservice
 Run in dev mode with Kamon using
 
 `sbt aspectj-runner:run`
+
+
+SETUP
+ -- Change the top package to match your service name
+ -- Initialise git and set upstream to remote
+ -- Enable annotation processing for lombok
